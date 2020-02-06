@@ -1,0 +1,30 @@
+class BoundedBlockingQueue {
+    Queue<Integer> queue;
+    int limit;
+    public BoundedBlockingQueue(int capacity) {
+        this.queue = new LinkedList<>();
+        this.limit = capacity;
+    }
+    
+    public synchronized void enqueue(int element) throws InterruptedException {
+        while(queue.size() == limit) {
+            wait();
+        }
+        
+        queue.offer(element);
+        notifyAll();
+        return;
+    }
+    
+    public synchronized int dequeue() throws InterruptedException {
+        while(queue.size() == 0)
+            wait();
+        int val = queue.poll();
+        notifyAll();
+        return val;
+    }
+    
+    public int size() {
+        return queue.size();
+    }
+}
