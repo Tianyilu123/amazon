@@ -1,0 +1,65 @@
+class Solution {
+    public List<List<Integer>> pacificAtlantic(int[][] matrix) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0)
+            return res;
+        int row = matrix.length,  col = matrix[0].length;
+        
+        boolean[][] pacific = new boolean[row][col];
+        boolean[][] atlantic = new boolean[row][col];
+        Queue<int[]> queue = new LinkedList<>();
+        
+        // left
+        for(int i=0; i<row; i++) { 
+            queue.add(new int[] {i,0});
+            pacific[i][0] = true;
+        }
+        
+        // top
+        for(int j=1; j<col; j++) {
+            queue.add(new int[] {0,j});
+            pacific[0][j] = true;
+        }
+        bfs(res, queue, pacific, atlantic, matrix);
+        
+        // right
+        for(int i=0; i<row; i++) {
+            queue.add(new int[] {i, col-1});
+            atlantic[i][col-1] = true;
+        }
+        // bottom
+        for(int j=0; j<col-1; j++) {
+            queue.add(new int[] {row-1, j});
+            atlantic[row-1][j] = true;
+        }
+        bfs(res, queue, atlantic, pacific, matrix);
+        
+        return res;
+    }
+    
+    private void bfs(List<List<Integer>> res, Queue<int[]> queue, boolean[][] selfSet, 
+                    boolean[][] otherSet, int[][] matrix) {
+        int row = matrix.length, col = matrix[0].length;
+        int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1}};
+        while(!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            
+            for(int[] dir : dirs) {
+                int ii = cur[0] + dir[0], jj = cur[1] + dir[1];
+                if(ii>=0 && ii<row && jj>=0 && jj<col && 
+                                    matrix[cur[0]][cur[1]] <= matrix[ii][jj]) {
+                    if(!selfSet[ii][jj]) {
+                        queue.offer(new int[]{ii, jj});
+                        selfSet[ii][jj] = true;
+                    }
+                }
+            }
+            
+            if(otherSet[cur[0]][cur[1]]) {
+                List<Integer> tmp = new ArrayList<>();
+                tmp.add(cur[0]); tmp.add(cur[1]);
+                res.add(tmp);
+            }
+        }
+    }
+}
