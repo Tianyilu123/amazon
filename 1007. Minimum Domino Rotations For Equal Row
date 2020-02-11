@@ -1,0 +1,20 @@
+class Solution {
+    public int minDominoRotations(int[] A, int[] B) {
+        int resA = Math.min(count(A[0], A, B), count(A[0], B, A));
+        int resB = Math.min(count(B[0], A, B), count(B[0], B, A));
+        int res = Math.min(resA, resB);
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+    
+    private int count(int target, int[] A, int[] B) {
+        int res = 0;
+        for(int i=0; i<A.length; i++) {
+            if(A[i] != target)
+                if(B[i] == target)
+                    res++;
+                else
+                    return Integer.MAX_VALUE;
+        }
+        return res;
+    }
+}
