@@ -1,0 +1,58 @@
+class Solution {
+    public double[] calcEquation(List<List<String>> equations, double[] values, 
+                                                        List<List<String>> queries) {
+        Map<String, Map<String, Double>> map = new HashMap<>();
+        build(map, equations, values);
+        
+        double[] res = new double[queries.size()];
+        Arrays.fill(res, -1.0);
+        
+        int idx = 0;
+        for(List<String> query : queries) {
+            String a = query.get(0);
+            String b = query.get(1);
+            if(!map.containsKey(a) || !map.containsKey(b)) 
+                idx++;
+            else{
+                dfs(map, a, b, res, idx, new HashSet<>(), 1.0);
+                idx++;
+            }
+        }
+        return res;
+    }
+    
+    private void build(Map<String, Map<String, Double>> map, List<List<String>> equations, 
+                                                            double[] values){
+        int idx = 0;
+        for(List<String> equation : equations) {
+            String a = equation.get(0);
+            String b = equation.get(1);
+            
+            map.putIfAbsent(a, new HashMap<>());
+            map.putIfAbsent(b, new HashMap<>());
+            map.get(a).put(b, values[idx]);
+            map.get(b).put(a, 1.0/values[idx]);
+            map.get(a).put(a, 1.0);
+            map.get(b).put(b, 1.0);
+            idx++;
+        }
+    }
+    
+    private void dfs(Map<String, Map<String, Double>> map, String a, String b, double[] res, int idx,
+                                        HashSet<String> visited, double tmp) {
+        visited.add(a);
+        if(map.get(a) == null || map.get(a).size() == 0)
+            return;
+        
+        if(map.get(a).containsKey(b)) {
+            res[idx] = map.get(a).get(b) * tmp;
+            return;
+        }
+        
+        for(String next : map.get(a).keySet()) {
+            if(visited.contains(next))
+                continue;
+            dfs(map, next, b, res, idx, visited, tmp * map.get(a).get(next));
+        }
+    }
+}
