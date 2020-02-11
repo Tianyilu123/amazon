@@ -1,0 +1,15 @@
+class Solution {
+    public int countNodes(TreeNode root) {
+        int left = helper(root, true);
+        int right = helper(root, false);
+        if(left == right)
+            return (1 << left) - 1;
+        else
+            return countNodes(root.left) + countNodes(root.right) + 1;
+    }
+    
+    private int helper(TreeNode root, boolean left) {
+        if(root == null) return 0;
+        return left == true ? helper(root.left, left) + 1 : helper(root.right, left) + 1;
+    }
+}
