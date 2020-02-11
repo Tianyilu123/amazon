@@ -1,0 +1,43 @@
+class Solution {
+    private int curLab = 0;
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        HashMap<Integer, List<Integer>> graph = new HashMap<>();
+        
+        int row = prerequisites.length;
+        
+        for(int i=0; i<row; i++) {
+            int prev = prerequisites[i][1];
+            int next = prerequisites[i][0];
+            if(graph.get(prev) == null)
+                graph.put(prev, new ArrayList<>());
+            graph.get(prev).add(next);
+        }
+        
+        int[] res = new int[numCourses];
+        curLab = numCourses - 1;
+        int[] status = new int[numCourses];
+        
+        for(int i=0; i<numCourses; i++) {
+            if(!topo(res, i, graph, status))
+                return new int[0];
+        }
+        return res;
+    }
+    
+    private boolean topo(int[] res, int course, HashMap<Integer, List<Integer>> map, 
+                                                    int[] status) {
+        if(status[course] == -1) return false;
+        if(status[course] == 1) return true;
+        status[course] = -1;
+        if(map.containsKey(course)) { 
+            for(int next : map.get(course)) {
+                if(!topo(res, next, map, status))
+                return false;
+                }
+        }
+        
+        status[course] = 1;
+        res[curLab--] = course;
+        return true;
+    }
+}
