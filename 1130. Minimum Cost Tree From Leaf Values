@@ -1,0 +1,22 @@
+class Solution {
+    public int mctFromLeafValues(int[] arr) {
+        int len = arr.length;
+        Stack<Integer> stack = new Stack<>();
+        int res = 0;
+        stack.push(Integer.MAX_VALUE);
+        for(int cur : arr) {
+            while(stack.peek() <= cur) {
+                // drop value is value smaller than its both side;
+                int drop = stack.pop();
+                res += drop *Math.min(stack.peek(), cur);
+            }
+            stack.push(cur);
+        }
+        while(stack.size() > 2) {
+            // make bigger number be used as less as possible
+            res += stack.pop() * stack.peek();
+        }
+        
+        return res;
+    }
+}
