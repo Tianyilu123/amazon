@@ -1,0 +1,63 @@
+class Solution {
+    
+    class UnionFind {
+        public int size;
+        public int[] ids, sz;
+        
+        public UnionFind(int n) {
+            size = n;
+            ids = new int[n];
+            sz = new int[n];
+            
+            for(int i=0; i<n; i++) {
+                ids[i] = i;
+                sz[i] = 1;
+            }
+        }
+        
+        public boolean find(int p, int q) {
+            return root(p) == root(q);
+        }
+        
+        public void union(int p, int q) {
+            int rootP = root(p), rootQ = root(q);
+            if(sz[rootP] < sz[rootQ]) {
+                int temp = rootP;
+                rootP = rootQ;
+                rootQ = temp;
+            }
+            
+            ids[rootQ] = rootP;
+            sz[rootP] += sz[rootQ];
+            this.size--;
+        }
+        
+        private int root(int i) {
+            int tempI = i;
+            while(i != ids[i]) {
+                ids[i] = ids[ids[i]];
+                i = ids[i];
+            }
+            ids[tempI] = i;
+            return i;
+        }
+    }
+    
+    public boolean validTree(int n, int[][] edges) {
+        if(edges == null) return false;
+        if(n-1 != edges.length) return false;
+        
+        UnionFind uf = new UnionFind(n);
+        
+        for(int[] e : edges) {
+            int p = e[0], q = e[1];
+            if(uf.find(p, q)) {
+                return false;
+            } else {
+                uf.union(p,q);
+            }
+        }
+        
+        return uf.size == 1;
+    }
+}
