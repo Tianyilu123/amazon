@@ -1,0 +1,39 @@
+class Solution {
+    int [][] dirs = new int[][]{{-1, -2}, {-1, 2}, {1, -2}, {1, 2}, 
+                                {-2, -1}, {-2, 1}, {2, -1}, {2, 1}};
+    
+    public int minKnightMoves(int x, int y) {
+        x = Math.abs(x);
+        y = Math.abs(y);
+        
+        HashSet<String> visited = new HashSet<>();
+        LinkedList<int []> que = new LinkedList<>();
+        que.add(new int[]{0, 0});
+        visited.add("0,0");
+        
+        int step = 0;
+        while(!que.isEmpty()){
+            int size = que.size();
+            while(size-->0){
+                int [] cur = que.poll();
+                if(cur[0] == x && cur[1] == y){
+                    return step;
+                }
+
+                for(int [] dir : dirs){
+                    int i = cur[0] + dir[0];
+                    int j = cur[1] + dir[1];
+                    if(!visited.contains(i+","+j) && i>=-1 && j>=-1){
+// For example, to reach (1,1) from (0, 0), the best way is to get (2, -1) or (-1, 2) first, then (1,1) (two steps). If we eliminate all coordinates with negative numbers, then we can't reach (1,1) from (0, 0) within two steps.
+                        que.add(new int[]{i, j});
+                        visited.add(i+","+j);
+                    }
+                }
+            }
+            
+            step++;
+        }
+        
+        return -1;
+    }
+}
